@@ -129,7 +129,7 @@
 			.done(function(data) {
 				if (data.code == 1) {
 					alert('가입을 환영합니다! 로그인 해주세요.');
-					//location.href="/user/sign_in_view";
+					location.href="/user/sign_in_view";
 				} else {
 					alert(data.errorMessage);
 				}

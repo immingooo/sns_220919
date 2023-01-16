@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sns.common.EncryptUtils;
 import com.sns.user.bo.UserBO;
 
 @RestController
@@ -20,7 +21,7 @@ public class UserRestController {
 	private UserBO userBO;
 
 	/**
-	 * 아이디 중복확인
+	 * 아이디 중복확인 API
 	 * @param loginId
 	 * @return
 	 */
@@ -44,6 +45,14 @@ public class UserRestController {
 		return result;
 	}
 	
+	/**
+	 * 회원가입 API
+	 * @param loginId
+	 * @param password
+	 * @param name
+	 * @param email
+	 * @return
+	 */
 	@PostMapping("/sign_up")
 	public Map<String, Object> signUp(
 			@RequestParam("loginId") String loginId,
@@ -51,9 +60,11 @@ public class UserRestController {
 			@RequestParam("name") String name,
 			@RequestParam("email") String email) {
 		
+		String hashedPassword = EncryptUtils.md5(password);
+		
 		Map<String, Object> result = new HashMap<>();
 		
-		int row = userBO.addUser(loginId, password, name, email);
+		int row = userBO.addUser(loginId, hashedPassword, name, email);
 		if (row > 0) {
 			result.put("code", 1);
 			result.put("result", "성공");
@@ -61,7 +72,6 @@ public class UserRestController {
 			result.put("code", 500);
 			result.put("errorMessage", "추가된 행이 없습니다.");
 		}
-		
 		
 		return result;
 	}
