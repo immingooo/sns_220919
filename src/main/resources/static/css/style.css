@@ -4,4 +4,4 @@ header {height:50px;}
 .contents {height: 400px;}
 
 .bg-gray {background-color: #dcdcdc;}
-.box1 {height:516px; width: 550px; background-color: #F9F9F9; box-shadow: 5px 5px 10px 2px #BABABA;}
+.box1 {min-height:524px; background-color: #F9F9F9; box-shadow: 5px 5px 10px 2px #BABABA;}
