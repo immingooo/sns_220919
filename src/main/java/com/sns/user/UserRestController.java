@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sns.common.EncryptUtils;
 import com.sns.user.bo.UserBO;
+import com.sns.user.model.User;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/user")
@@ -71,6 +74,32 @@ public class UserRestController {
 		} else {
 			result.put("code", 500);
 			result.put("errorMessage", "추가된 행이 없습니다.");
+		}
+		
+		return result;
+	}
+	
+	@PostMapping("/sign_in")
+	public Map<String, Object> signIn(
+			@RequestParam("loginId") String loginId,
+			@RequestParam("password") String password,
+			HttpSession session) {
+		
+		String hashedPassword = EncryptUtils.md5(password);
+		
+		User user = userBO.getUserByLoginIdPassword(loginId, hashedPassword);
+		
+		Map<String, Object> result = new HashMap<>();
+		if (user != null) {
+			result.put("code", 1);
+			result.put("result", "성공");
+			
+			session.setAttribute("userId", user.getId());
+			session.setAttribute("userLoginId", user.getLoginId());
+			session.setAttribute("userName", user.getName());
+		} else {
+			result.put("code", 500);
+			result.put("errorMessage", "존재하지 않는 사용자 입니다.");
 		}
 		
 		return result;
