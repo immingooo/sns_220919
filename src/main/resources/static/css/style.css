@@ -7,5 +7,10 @@ header {height:50px;}
 .box1 {min-height:524px; background-color: #F9F9F9; box-shadow: 5px 5px 10px 2px #BABABA;}
 .box2 {min-height:250px; background-color: #F9F9F9; box-shadow: 5px 5px 10px 2px #BABABA;}
 
-textarea {border:none;}
-.box3 {width:500px; border:1px solid #999};
+/* textarea {border:none;} */
+/* .box3 {width:400px; border:1px solid #999} */
+/* .box4 {width:400px; border:1px solid #999} */
+#writeTextArea {height:100px;}
+
+a {text-decoration:none; color:#000}
+a:hover {text-decoration:none; color:#000}
