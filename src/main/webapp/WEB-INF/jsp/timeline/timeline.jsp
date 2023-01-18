@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <div class="d-flex justify-content-center">
 	<div class="contents-box col-7">
-		<%-- 글쓰기 영역 --%>
+		<%-- 글쓰기 영역: 로그인 된 상태에서만 보여짐(if문으로 처리) --%>
 		<div class="write-box border rounded mt-3">
 			<textarea class="w-100 border-0" id="writeTextArea" placeholder="내용을 입력해주세요"></textarea>
 			<div class="d-flex justify-content-between">
@@ -16,7 +16,7 @@
                     <div id="fileName" class="ml-2">
                     </div>
                 </div>
-				<button id="writeBtn" class="btn btn-info">게시</button>
+				<button type="button" id="writeBtn" class="btn btn-info">게시</button>
 			</div>
 		</div>
 		
@@ -79,3 +79,72 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	$(document).ready(function() {
+		// 파일업로드 이미지 클릭 => 숨겨져 있는 file을 동작시킴
+		$('#fileUploadBtn').on('click', function(e){
+			//alert("1111");
+			e.preventDefault(); // a태그의 스크롤이 저절로 올라가는 현상 방지(a태그의 성질)
+			$('#file').click(); // input file을 사용자가 클릭한 것과 같은 효과
+		});
+		
+		// 사용자가 이미지를 선택했을 때 유효성 확인 및 업로드 된 파일 이름 노출(file에 변경이 일어났을 때로 이벤트를 잡아야 함)
+		$('#file').on('change', function(e) { // e에 파일이름도 들고 있음
+			//alert("파일 선택");
+			let fileName = e.target.files[0].name; // target은 this랑 같은 역할. 파일명만 가져옴 dog-4372036_960_720.jpg
+			//alert(fileName);
+			
+			// 확장자 유효성 확인 - Memo랑 다른 방식
+			let ext = fileName.split(".").pop().toLowerCase(); // jpg
+			if (ext != 'jpg' && ext != 'jpeg' && ext != 'gif' && ext != 'png') {
+				alert("이미지 파일만 업로드 할 수 있습니다.");
+				$('#file').val(''); // 파일 태그의 실제 파일 제거(중요)
+				$('#fileName').text(''); // 보이는 파일 이름 비우기
+				return;
+			}
+			
+			// 유효성 통과한 올바른 이미지는 상자에 업로드 된 파일 이름 노출
+			$('#fileName').text(fileName); // text(): 태그사이에 값을 넣는것
+		});
+		
+		// 게시버튼 클릭
+		$('#writeBtn').on('click', function() {
+			//alert("1111");
+			// validation 체크
+			let writeTextArea = $('#writeTextArea').val();
+			if (writeTextArea == '') {
+				alert("내용을 입력해주세요");
+				return;
+			}
+			
+			// 이미지 파일이 없는 경우???
+			let file = $('#file').val();
+			console.log(file);
+			
+			let formData = new FormData();
+			formData.append("content", writeTextArea);
+			formData.append("file", $('#file')[0].files[0]);
+			
+			$.ajax({
+				type:"post"
+				, url:"/post/create"
+				, data:formData
+				, enctype:"multipart/form-data" // 파일업로드를 위한 필수 설정
+				, processData:false // 파일업로드를 위한 필수 설정
+				, contentType:false // 파일업로드를 위한 필수 설정
+				
+				, success:function(data) {
+					if (data.code == 1) {
+						alert("글 업로드 성공!");
+					} else {
+						alert(data.errorMessage);
+					}
+				}
+				, error:function(e) {
+					alert("글 업로드에 실패했습니다.");
+				}
+			});
+		});
+	});
+</script>
