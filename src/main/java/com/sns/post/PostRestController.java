@@ -24,20 +24,28 @@ public class PostRestController {
 	@PostMapping("/create")
 	public Map<String, Object> create(
 			@RequestParam("content") String content,
-			@RequestParam(value="file", required=false) MultipartFile file,
+			@RequestParam("file") MultipartFile file,
 			HttpSession session) {
 		
-		int userId = (int)session.getAttribute("userId");
+		Map<String, Object> result = new HashMap<>();
+		
+		Integer userId = (Integer)session.getAttribute("userId");
 		String userLoginId = (String)session.getAttribute("userLoginId");
+		
+		// 로그인 후 타임라인 페이지에 계속 있다가 시간이 지나서 로그인이 풀렸을 때
+		if (userId == null) {
+			result.put("code", 500);
+			result.put("errorMessage", "로그인을 해주세요");
+			return result;
+		}
 		
 		int rowCount = postBO.addPost(userId, userLoginId, content, file);
 		
-		Map<String, Object> result = new HashMap<>();
 		if (rowCount > 0) {
 			result.put("code", 1);
 			result.put("result", "성공");
 		} else {
-			result.put("code", 500);
+			result.put("code", 501);
 			result.put("errorMessage", "글 업로드에 실패했습니다. 관리자에게 문의해주세요.");
 		}
 		

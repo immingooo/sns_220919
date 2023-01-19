@@ -1,32 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="d-flex justify-content-center">
 	<div class="contents-box col-7">
 		<%-- 글쓰기 영역: 로그인 된 상태에서만 보여짐(if문으로 처리) --%>
-		<div class="write-box border rounded mt-3">
-			<textarea class="w-100 border-0" id="writeTextArea" placeholder="내용을 입력해주세요"></textarea>
-			<div class="d-flex justify-content-between">
-				<div class="file-upload d-flex">
-                    <%-- file 태그는 숨겨두고 이미지를 클릭하면 file 태그를 클릭한 것처럼 이벤트를 줄 것이다. --%>
-                    <input type="file" id="file" class="d-none" accept=".gif, .jpg, .png, .jpeg">
-                    <%-- 이미지에 마우스 올리면 마우스커서가 링크 커서가 변하도록 a 태그 사용 --%>
-                    <a href="#" id="fileUploadBtn"><img width="35" src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png"></a>
-
-                    <%-- 업로드 된 임시 파일 이름 저장될 곳 --%>
-                    <div id="fileName" class="ml-2">
-                    </div>
-                </div>
-				<button type="button" id="writeBtn" class="btn btn-info">게시</button>
+		<c:if test="${not empty userId}">
+			<div class="write-box border rounded mt-3">
+				<textarea class="w-100 border-0" id="writeTextArea" placeholder="내용을 입력해주세요"></textarea>
+				<div class="d-flex justify-content-between">
+					<div class="file-upload d-flex">
+	                    <%-- file 태그는 숨겨두고 이미지를 클릭하면 file 태그를 클릭한 것처럼 이벤트를 줄 것이다. --%>
+	                    <input type="file" id="file" class="d-none" accept=".gif, .jpg, .png, .jpeg">
+	                    <%-- 이미지에 마우스 올리면 마우스커서가 링크 커서가 변하도록 a 태그 사용 --%>
+	                    <a href="#" id="fileUploadBtn"><img width="35" src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png"></a>
+	
+	                    <%-- 업로드 된 임시 파일 이름 저장될 곳 --%>
+	                    <div id="fileName" class="ml-2">
+	                    </div>
+	                </div>
+					<button type="button" id="writeBtn" class="btn btn-info">게시</button>
+				</div>
 			</div>
-		</div>
+		</c:if>
 		
 		<%-- 타임라인 영역 --%>
-		<div class="timeline-box my-5">
+		<div class="timeline-box my-4">
+			<c:forEach var="post" items="${postList}">
 			<%-- 카드1 --%>
-			<div class="card border rounded p-0 mt-5">
+			<div class="card border rounded p-0 mt-4">
 				<%-- 글쓴이, 더보기(삭제) --%>
 				<div class="d-flex justify-content-between m-2">
-					<div class="font-weight-bold">글쓰니</div>
+					<div class="font-weight-bold">${post.userId}</div>
 					<%-- 더보기 --%>
 					<a href="#" class="more-btn" data-toggle="modal" data-target="#modal" data-post-id="${card.post.id}">
                         <img src="/static/img/more-icon.png" alt="더보기 아이콘" width="30">
@@ -35,7 +39,7 @@
 				
 				<%-- 카드 이미지 --%>
 				<div class="card-img">
-					<img src="https://cdn.pixabay.com/photo/2018/03/28/19/21/easter-3270234_960_720.jpg" alt="업로드한 사진" class="w-100">
+					<img src="http://localhost:8080${post.imagePath}" alt="업로드한 사진" class="w-100">
 				</div>
 				
 				<%-- 좋아요 --%>
@@ -48,8 +52,8 @@
 				
 				<%-- 글 --%>
 				<div class="card-post pr-2 pl-2">
-					<span class="font-weight-bold">글쓰니</span>
-					<span>글 내용입니다.</span>
+					<span class="font-weight-bold">${post.userId}</span>
+					<span>${post.content}</span>
 				</div>
 				
 				<%-- 댓글 --%>
@@ -76,6 +80,7 @@
                     </div>
 				</div>
 			</div>
+			</c:forEach>
 		</div>
 	</div>
 </div>
@@ -118,13 +123,25 @@
 				return;
 			}
 			
-			// 이미지 파일이 없는 경우???
+			// 이미지 파일이 없는 경우 => ''
 			let file = $('#file').val();
-			console.log(file);
+			if (file == '') {
+				alert("파일을 업로드 해주세요");
+				return;
+			}
 			
+			// 파일이 업로드 된 경우 확장자 체크
+			let ext = file.split(".").pop().toLowerCase(); //// 파일 경로를 .으로 나누고 확장자가 있는 마지막 문자열을 가져온 후 모두 소문자로 변경
+			if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+				alert("gif, png, jpg, jpeg 파일만 업로드 할 수 있습니다.");
+				$('#file').val(''); // 파일을 비우기
+				return;
+			}
+			
+			// 폼태그를 자바스크립트에서 만든다.
 			let formData = new FormData();
 			formData.append("content", writeTextArea);
-			formData.append("file", $('#file')[0].files[0]);
+			formData.append("file", $('#file')[0].files[0]); // $('#file')[0]은 첫번째 input file 태그를 의미, files[0]는 업로드된 첫번째 파일
 			
 			$.ajax({
 				type:"post"
@@ -136,13 +153,17 @@
 				
 				, success:function(data) {
 					if (data.code == 1) {
-						alert("글 업로드 성공!");
+						//alert("글 업로드 성공!");
+						location.reload(true);
+					} else if (data.code == 500){ // 비로그인일 때
+						alert(data.errorMessage);
+						location.href="/user/sign_in_view";
 					} else {
 						alert(data.errorMessage);
 					}
 				}
 				, error:function(e) {
-					alert("글 업로드에 실패했습니다.");
+					alert("글 저장에 실패했습니다.");
 				}
 			});
 		});
