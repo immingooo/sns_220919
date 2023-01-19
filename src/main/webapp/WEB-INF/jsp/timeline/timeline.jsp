@@ -63,21 +63,27 @@
 				
 				<%-- 댓글 목록 --%>
 				<div class="card-comment-list m-2">
-					<div class="card-comment">
-						<span class="font-weight-bold">댓글쓰니 :</span>
-						<span>댓글 내용입니다.</span>
-						
-						<%-- 댓글 삭제 버튼 --%>
-						<a href="#" class="commentDelBtn">
-                            <img src="https://www.iconninja.com/files/603/22/506/x-icon.png" alt="삭제버튼" width="10px" height="10px">
-                        </a>
-					</div>
+					<c:forEach var="comment" items="${commentList}">
+						<c:if test="${comment.postId       }">
+						<div class="card-comment">
+							<span class="font-weight-bold">댓글쓰니 :</span>
+							<span>댓글 내용입니다.</span>
+							
+							<%-- 댓글 삭제 버튼 --%>
+							<a href="#" class="commentDelBtn">
+	                            <img src="https://www.iconninja.com/files/603/22/506/x-icon.png" alt="삭제버튼" width="10px" height="10px">
+	                        </a>
+						</div>
+						</c:if>
+					</c:forEach>
 					
-					<%-- 댓글 쓰기 --%>
+					<%-- 댓글 쓰기: 로그인이 되어있을 때만 보여진다. --%>
+					<c:if test="${not empty userId}">
 					<div class="comment-write d-flex border-top mt-3">
                         <input type="text" class="form-control border-0 mr-2" placeholder="댓글 달기"/> 
-                        <button type="button" class="comment-btn btn btn-light" data-post-id="${card.post.id}">게시</button>
+                        <button type="button" class="comment-btn btn btn-light" data-post-id="${post.id}">게시</button>
                     </div>
+                    </c:if>
 				</div>
 			</div>
 			</c:forEach>
@@ -164,6 +170,40 @@
 				}
 				, error:function(e) {
 					alert("글 저장에 실패했습니다.");
+				}
+			});
+		});
+		
+		// 댓글 게시버튼 클릭(댓글쓰기)
+		$('.comment-btn').on('click', function() { // 지금 클릭된 건 모든 게시버튼은 모아놓은 배열이라고 생각하면 됨
+			// 글번호, 댓글 내용 얻어오기
+			let postId = $(this).data('post-id');
+			console.log(postId);
+			
+			// 게시버튼이 클릭됐을 때 그 버튼에 해당하는 input의 val을 가져올 순 없음.
+			// $(this)근처의 태그들을 살펴봐서 가져와야함. 나랑 형제인걸 가지고오기.
+			// 지금 클릭된 게시버튼의 형제인 input 태그를 가져온다. siblings
+			let comment = $(this).siblings('input').val().trim(); // 눌린 게시버튼과 형제가 되는 input태그의 값을 가져온다.
+			//alert(comment);
+			if (comment == '') {
+				return;
+			}
+			
+			$.ajax({
+				url:"/comment/create"
+				, data:{"postId":postId, "comment":comment}
+			
+				, success:function(data) {
+					if (data.code == 1) {
+						alert("댓글작성 성공");
+						location.reload(true);
+					} else {
+						alert(data.errorMessage);
+					}
+				}
+				, error:function(jqXHR, testStatus, errorThrown) {
+					var errorMsg = jqXHR.responseJSON.status;
+					alert(errorMsg + ":" + testStatus);
 				}
 			});
 		});
