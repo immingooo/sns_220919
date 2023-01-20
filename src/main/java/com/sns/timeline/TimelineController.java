@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.sns.comment.bo.CommentBO;
-import com.sns.comment.model.Comment;
 import com.sns.post.bo.PostBO;
-import com.sns.post.model.Post;
+import com.sns.timeline.bo.TimelineBO;
+import com.sns.timeline.model.CardView;
 
 @Controller
 @RequestMapping("/timeline")
@@ -21,19 +21,24 @@ public class TimelineController {
 	private PostBO postBO;
 	
 	@Autowired
-	private CommentBO commentBo;
+	private CommentBO commentBO;
+	
+	@Autowired
+	private TimelineBO timelineBO;
 
 	@GetMapping("/timeline_view")
 	public String timelineView(Model model) {
 		
 		// post DB select
-		List<Post> postList = postBO.getPostList();
+		//List<Post> postList = postBO.getPostList();
+		List<CardView> cardList = timelineBO.generateCardList(); // 가져와지는지 디버깅으로 확인하기
 		
 		// comment DB select - 조건: 
-		List<Comment> commentList = commentBo.getCommentList();
+		//List<Comment> commentList = commentBO.getCommentList();
 		
-		model.addAttribute("commentList", commentList);
-		model.addAttribute("postList", postList);
+		//model.addAttribute("commentList", commentList);
+		//model.addAttribute("postList", postList);
+		model.addAttribute("cardList", cardList);
 		model.addAttribute("viewName", "timeline/timeline");
 		return "template/layout";
 	}
