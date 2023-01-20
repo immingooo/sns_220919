@@ -64,10 +64,10 @@
 				<%-- 댓글 목록 --%>
 				<div class="card-comment-list m-2">
 					<c:forEach var="comment" items="${commentList}">
-						<c:if test="${comment.postId       }">
+						<c:if test="${comment.postId eq post.id}">
 						<div class="card-comment">
-							<span class="font-weight-bold">댓글쓰니 :</span>
-							<span>댓글 내용입니다.</span>
+							<span class="font-weight-bold">${comment.userId} :</span>
+							<span>${comment.content}</span>
 							
 							<%-- 댓글 삭제 버튼 --%>
 							<a href="#" class="commentDelBtn">
@@ -195,7 +195,7 @@
 			
 				, success:function(data) {
 					if (data.code == 1) {
-						alert("댓글작성 성공");
+						//alert("댓글작성 성공");
 						location.reload(true);
 					} else {
 						alert(data.errorMessage);
