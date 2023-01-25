@@ -44,8 +44,9 @@
 				
 				<%-- 좋아요 --%>
 				<div class="card-like p-2">
-					<a href="#" class="like-btn" data-post-id="${card.post.id}">
-                    	<img src="https://www.iconninja.com/files/214/518/441/heart-icon.png" width="18" height="18" alt="empty heart">
+					<a href="/like/${card.post.id}" class="like-btn">
+                    	<img src="/static/img/empty-heart-icon.png" data-empty-heart-id="emptyHeart${card.post.id}" width="18" height="18" alt="empty heart">
+                    	<%-- <img src="https://www.iconninja.com/files/527/809/128/heart-icon.png" class="d-none" data-full-heart-id="fullHeart${card.post.id}" width="18" height="18" alt="full heart"> --%>
                         좋아요 10개
                     </a>
 				</div>
@@ -208,29 +209,21 @@
 			});
 		});
 		
-		// 좋아요 버튼 클릭/해제
-		$('.like-btn').on('click', function() {
-			//alert('111');
-			let postId = $(this).data('post-id');
-			//alert(postId);
-			
-			$.ajax({
-				type:"get"
-				, url:"/like/{" + postId + "}"
-				, data:{"postId":postId}
-				
-				, success:function(data) {
-					if (data.code == 1) {
-						alert("좋아요동작");
-					} else if (data.code == 500) {
-						alert(data.errorMessage);
-					}
-				}
-				, error:function(jqXHR, testStatus, errorThrown) {
-					var errorMsg = jqXHR.responseJSON.status;
-					alert(errorMsg + ":" + testStatus);
-				}
-			});
+		// 좋아요/해제 버튼 클릭
+		$('.like-btn').on('click', function() { // 이미지 바꾸기
+			$(this).data
 		});
+		
+		// 전체 좋아요에 다 적용됨,,,
+		/* $('.empty-heart').on('click', function() { // 빈 하트를 클릭했을 때 
+			$('.empty-heart').hasClass('d-none'); // 빈 하트는 숨기기
+			$('.full-heart').removeClass('d-none'); // 채워진 하트를 보이게 하고
+			
+			
+		});
+		$('.full-heart').on('click', function() { // 채워진 하트를 클릭했을 때
+			$('.empty-heart').removeClass('d-none'); // 빈 하트를 보이게 하고
+			$('.full-heart').hasClass('d-none'); // 채워진 하트 숨기기
+		}); */
 	});
 </script>

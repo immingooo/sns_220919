@@ -40,7 +40,7 @@ public class TimelineBO {
 			// 글 가져오기
 			card.setPost(post);
 			
-			// 글쓴이 정보 가져오기!!!
+			// 글쓴이 정보 가져오기!!!(user DB select) - 모든 사용자의 정보를 전부 다 가져오는 게 아닌 글 작성한 사람의 정보만 가져오기 => 글 작성한 사람의 로그인 아이디가 필요해서
 			User user = userBO.getUserById(post.getUserId());
 			card.setUser(user);
 			
