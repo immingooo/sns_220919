@@ -22,4 +22,15 @@ public class LikeBO {
 	public void addLikeByPostIdUserId(int postId, int userId) {
 		likeDAO.insertLikeByPostIdUserId(postId, userId);
 	}
+	
+	public boolean existLike(int postId, Integer userId) { // 여기서 비로그인 처리도 할 거임
+		if (userId == null) { // 비로그인 처리
+			return false;
+		}
+		return likeDAO.selectLikeCountByPostIdOrUserId(postId, userId) > 0 ? true : false; // 로그인
+	}
+	
+	public int getLikeCountByPostId(int postId) {
+		return likeDAO.selectLikeCountByPostIdOrUserId(postId, null);
+	}
 }

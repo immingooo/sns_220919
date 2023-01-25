@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.sns.comment.bo.CommentBO;
 import com.sns.comment.model.CommentView;
+import com.sns.like.bo.LikeBO;
 import com.sns.post.bo.PostBO;
 import com.sns.post.model.Post;
 import com.sns.timeline.model.CardView;
@@ -25,9 +26,12 @@ public class TimelineBO {
 	
 	@Autowired
 	private CommentBO commentBO;
+	
+	@Autowired
+	private LikeBO likeBO;
 
 	// 로그인이 되지 않은 사람도 카드 목록이 보여야 한다.
-	public List<CardView> generateCardList() { // 응답을 내리기 위한 객체로 가공할 땐 generate라는 이름으로 만든다.
+	public List<CardView> generateCardList(Integer userId) { // 응답을 내리기 위한 객체로 가공할 땐 generate라는 이름으로 만든다.
 		List<CardView> cardViewList = new ArrayList<>();
 		
 		// 글 목록 가져오기(post DB select)
@@ -49,6 +53,10 @@ public class TimelineBO {
 			card.setCommentList(commentList);
 			
 			// 내가 좋아요를 눌렀는지 filledLike. (로그인 안된 사람도 에러안나도록 해야함)
+			card.setFilledLike(likeBO.existLike(post.getId(), userId)); // 디버깅으로 확인하면 좋음
+			
+			// 글에 눌린 좋아요 개수
+			card.setLikeCount(likeBO.getLikeCountByPostId(post.getId())); // 디버깅으로 확인하면 좋음
 			
 			// 카드 리스트 채우기
 			cardViewList.add(card);

@@ -44,11 +44,19 @@
 				
 				<%-- 좋아요 --%>
 				<div class="card-like p-2">
-					<a href="/like/${card.post.id}" class="like-btn">
-                    	<img src="/static/img/empty-heart-icon.png" data-empty-heart-id="emptyHeart${card.post.id}" width="18" height="18" alt="empty heart">
-                    	<%-- <img src="https://www.iconninja.com/files/527/809/128/heart-icon.png" class="d-none" data-full-heart-id="fullHeart${card.post.id}" width="18" height="18" alt="full heart"> --%>
-                        좋아요 10개
+					<%-- 좋아요가 되어있을 때 --%>
+					<c:if test="${card.filledLike eq true}">
+					<a href="/like/${card.post.id}" class="like-btn" data-user-id="${userId}" data-post-id="${card.post.id}">
+                    	<img src="/static/img/full-heart-icon.png" width="18" height="18" alt="filled heart">
                     </a>
+                    </c:if>
+                    <%-- 좋아요가 해제되어 있을 때 --%>
+                    <c:if test="${card.filledLike eq false}">
+                    <a href="/like/${card.post.id}" class="like-btn" data-user-id="${userId}" data-post-id="${card.post.id}">
+                    	<img src="/static/img/empty-heart-icon.png" width="18" height="18" alt="empty heart">
+                    </a>
+                    </c:if>
+                    좋아요 ${card.likeCount}개
 				</div>
 				
 				<%-- 글 --%>
@@ -213,17 +221,5 @@
 		$('.like-btn').on('click', function() { // 이미지 바꾸기
 			$(this).data
 		});
-		
-		// 전체 좋아요에 다 적용됨,,,
-		/* $('.empty-heart').on('click', function() { // 빈 하트를 클릭했을 때 
-			$('.empty-heart').hasClass('d-none'); // 빈 하트는 숨기기
-			$('.full-heart').removeClass('d-none'); // 채워진 하트를 보이게 하고
-			
-			
-		});
-		$('.full-heart').on('click', function() { // 채워진 하트를 클릭했을 때
-			$('.empty-heart').removeClass('d-none'); // 빈 하트를 보이게 하고
-			$('.full-heart').hasClass('d-none'); // 채워진 하트 숨기기
-		}); */
 	});
 </script>

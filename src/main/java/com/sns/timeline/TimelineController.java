@@ -13,6 +13,8 @@ import com.sns.post.bo.PostBO;
 import com.sns.timeline.bo.TimelineBO;
 import com.sns.timeline.model.CardView;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/timeline")
 public class TimelineController {
@@ -27,11 +29,11 @@ public class TimelineController {
 	private TimelineBO timelineBO;
 
 	@GetMapping("/timeline_view")
-	public String timelineView(Model model) {
+	public String timelineView(Model model, HttpSession session) {
 		
 		// post DB select
 		//List<Post> postList = postBO.getPostList();
-		List<CardView> cardList = timelineBO.generateCardList(); // 가져와지는지 디버깅으로 확인하기
+		List<CardView> cardList = timelineBO.generateCardList((Integer)session.getAttribute("userId")); // 비로그인인 경우도 에러가 나지 않도록 하기위해 캐스팅을 Integer로. 가져와지는지 디버깅으로 확인하기
 		
 		// comment DB select - 조건: 
 		//List<Comment> commentList = commentBO.getCommentList();

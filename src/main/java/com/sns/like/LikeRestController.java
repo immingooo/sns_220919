@@ -32,16 +32,16 @@ public class LikeRestController {
 		if (userId == null) {
 			result.put("code", 500);
 			result.put("errorMessage", "로그인 해주세요.");
+			return result;
 		}
 		
 		// 누가 어느글에 좋아요를 눌렀는지 like DB select boolean
+		// if문 같은 로직이 컨트롤러에 있으면 안좋음!!! => BO에서 하기
 		boolean existLike = likeBO.getLikeByPostIdUserId(postId, userId);
 		if (existLike) { // true. 이미 좋아요를 눌렀을 때 (like DB delete)
 			likeBO.deleteLikeByPostIdUserId(postId, userId);
-			result.put("result", "좋아요 해제");
 		} else { // false. 새로 좋아요를 눌른 상황 (like DB insert)
 			likeBO.addLikeByPostIdUserId(postId, userId);
-			result.put("result", "좋아요");
 		}
 			
 		return result;
