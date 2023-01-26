@@ -31,10 +31,13 @@
 				<%-- 글쓴이, 더보기(삭제) --%>
 				<div class="d-flex justify-content-between m-2">
 					<div class="font-weight-bold">${card.user.loginId}</div>
-					<%-- 더보기 --%>
+					
+					<%-- 더보기(내가 쓴 글일 때만 노출) --%>
+					<c:if test="${userId eq card.user.id}">
 					<a href="#" class="more-btn" data-toggle="modal" data-target="#modal" data-post-id="${card.post.id}">
                         <img src="/static/img/more-icon.png" alt="더보기 아이콘" width="30">
                     </a>
+                    </c:if>
 				</div>
 				
 				<%-- 카드 이미지 --%>
@@ -99,6 +102,24 @@
 		</div>
 	</div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal">
+	<%-- modal-sm: 작은 모달 창 --%>
+	<%-- modal-dialog-centered: 모달 창 수직으로 가운데 정렬 --%>
+  	<div class="modal-dialog modal-sm modal-dialog-centered">
+    	<div class="modal-content text-center">
+      		<div class="py-3 border-bottom">
+      			<a href="#" id="deletePostBtn">삭제하기</a>
+      		</div>
+      		<div class="py-3">
+      			<%-- data-dismiss="modal": 모달창 닫힘 --%>
+      			<a href="#" data-dismiss="modal">취소하기</a>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
 
 <script>
 	$(document).ready(function() {
@@ -247,6 +268,43 @@
 				}
 				, error: function(e) {
 					alert("좋아요/해제 하는데 실패했습니다.");
+				}
+			});
+		});
+		
+		// 더보기 버튼(...) 클릭 -> 글 삭제를 위해
+		$('.more-btn').on('click', function(e) {
+			e.preventDefault(); // 거의 a태그에 붙임. 위로 올라가는 현상 방지
+			
+			let postId = $(this).data('post-id'); // getting(얻어옴)
+			//alert(postId);
+			
+			$('#modal').data('post-id', postId) // setting(세팅함): 모달 태그에 data-post-id를 심어 넣어줌. 동적으로 심어넣고
+		});
+		
+		// 모달 안에 있는 삭제하기 버튼 클릭 
+		$('#modal #deletePostBtn').on('click', function(e) {
+			e.preventDefault();
+			
+			let postId = $('#modal').data('post-id'); // 동적으로 가져옴
+			//alert(postId);
+			
+			// ajax 글 삭제
+			$.ajax({
+				type:"delete"
+				, url:"/post/delete"
+				, data:{"postId":postId}
+			
+				, success:function(data) {
+					if (data.code == 1) {
+						alert("글 삭제되었습니다.");
+						location.reload(true);
+					} else {
+						alert(data.errorMessage);
+					}
+				}
+				, error:function(e) {
+					alert("글 삭제하는데 실패했습니다.");
 				}
 			});
 		});
