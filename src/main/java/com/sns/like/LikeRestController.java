@@ -27,7 +27,7 @@ public class LikeRestController {
 		
 		Map<String, Object> result = new HashMap<>();
 		
-		// 로그인 정보
+		// 로그인 여부 확인
 		Integer userId = (Integer)session.getAttribute("userId");
 		if (userId == null) {
 			result.put("code", 500);
@@ -37,12 +37,10 @@ public class LikeRestController {
 		
 		// 누가 어느글에 좋아요를 눌렀는지 like DB select boolean
 		// if문 같은 로직이 컨트롤러에 있으면 안좋음!!! => BO에서 하기
-		boolean existLike = likeBO.getLikeByPostIdUserId(postId, userId);
-		if (existLike) { // true. 이미 좋아요를 눌렀을 때 (like DB delete)
-			likeBO.deleteLikeByPostIdUserId(postId, userId);
-		} else { // false. 새로 좋아요를 눌른 상황 (like DB insert)
-			likeBO.addLikeByPostIdUserId(postId, userId);
-		}
+		likeBO.likeToggle(postId, userId);
+		
+		result.put("code", 1);
+		result.put("result", "성공");
 			
 		return result;
 	}

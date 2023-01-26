@@ -46,13 +46,13 @@
 				<div class="card-like p-2">
 					<%-- 좋아요가 되어있을 때 --%>
 					<c:if test="${card.filledLike eq true}">
-					<a href="/like/${card.post.id}" class="like-btn" data-user-id="${userId}" data-post-id="${card.post.id}">
+					<a href="#" class="like-btn" data-user-id="${userId}" data-post-id="${card.post.id}">
                     	<img src="/static/img/full-heart-icon.png" width="18" height="18" alt="filled heart">
                     </a>
                     </c:if>
                     <%-- 좋아요가 해제되어 있을 때 --%>
                     <c:if test="${card.filledLike eq false}">
-                    <a href="/like/${card.post.id}" class="like-btn" data-user-id="${userId}" data-post-id="${card.post.id}">
+                    <a href="#" class="like-btn" data-user-id="${userId}" data-post-id="${card.post.id}">
                     	<img src="/static/img/empty-heart-icon.png" width="18" height="18" alt="empty heart">
                     </a>
                     </c:if>
@@ -218,8 +218,37 @@
 		});
 		
 		// 좋아요/해제 버튼 클릭
-		$('.like-btn').on('click', function() { // 이미지 바꾸기
-			$(this).data
+		$('.like-btn').on('click', function(e) { // 이미지 바꾸기
+			// a태그의 기본성질 막아두기
+			e.preventDefault();
+		
+			// 로그인 여부 확인
+			let userId = $(this).data('user-id');
+			//alert(userId);
+			if (userId == null) {
+				alert("로그인 해주세요");
+				return;
+			}
+			// 무슨 게시글에 있는 좋아요인지
+			let postId = $(this).data('post-id');
+			//alert(postId);
+			
+			$.ajax({
+				// request
+				url:"/like/" + postId
+				
+				// response
+				, success:function(data) {
+					if (data.code == 1) {
+						location.reload(true);
+					} else {
+						alert(data.errorMessage);
+					}
+				}
+				, error: function(e) {
+					alert("좋아요/해제 하는데 실패했습니다.");
+				}
+			});
 		});
 	});
 </script>

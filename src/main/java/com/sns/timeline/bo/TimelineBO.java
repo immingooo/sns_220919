@@ -52,7 +52,7 @@ public class TimelineBO {
 			List<CommentView> commentList = commentBO.generateCommentViewListByPostId(post.getId());
 			card.setCommentList(commentList);
 			
-			// 내가 좋아요를 눌렀는지 filledLike. (로그인 안된 사람도 에러안나도록 해야함)
+			// 내가 좋아요를 눌렀는지 filledLike. (로그인 안된 사람도 에러안나도록 해야함 => like BO에서 처리)
 			card.setFilledLike(likeBO.existLike(post.getId(), userId)); // 디버깅으로 확인하면 좋음
 			
 			// 글에 눌린 좋아요 개수
