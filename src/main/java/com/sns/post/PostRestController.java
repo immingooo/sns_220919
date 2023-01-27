@@ -71,6 +71,7 @@ public class PostRestController {
 		if (userId == null) {
 			result.put("code", 500);
 			result.put("errorMessage", "로그인 해주세요");
+			return result;
 		}
 		
 		// DB delete

@@ -54,6 +54,7 @@ public class PostBO {
 		Post post = getPostByPostIdUserId(postId, userId);
 		if (post == null) {
 			logger.warn("[글 삭제 에러] post is null. postId:{}, userId:{}", postId, userId);
+			return;
 		}
 		
 		// 이미지 있으면 이미지 폴더 삭제
@@ -66,7 +67,7 @@ public class PostBO {
 		
 		// 게시글에 연결되어있는 댓글, 좋아요도 다 삭제해야함
 		// 댓글들 삭제
-		commentBO.deleteCommentByPostId(post.getId()); // postId도 가능할듯.?
+		commentBO.deleteCommentByPostId(post.getId()); // postId도 가능
 		
 		// 좋아요들 삭제
 		likeBO.deleteLikeByPostId(post.getId());
